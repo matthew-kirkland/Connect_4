@@ -2,24 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <unistd.h>
 #include <stdbool.h>
+#include <unistd.h>
 
-#define NUM_ROWS 6
-#define NUM_COLS 7
-#define NUM_TO_WIN 4
-
-#define FIRST 0
-#define SECOND 1
-
-#define BLANK_TOKEN '_'
-#define FIRST_TOKEN 'X'
-#define SECOND_TOKEN 'O'
-
-struct game {
-    int turn;
-    char **board;
-};
+#include "include/game.h"
 
 char tokens[] = {FIRST_TOKEN, SECOND_TOKEN};
 
