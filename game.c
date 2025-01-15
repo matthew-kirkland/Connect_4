@@ -26,9 +26,11 @@ struct game *initialiseGame() {
     struct game *newGame = malloc(sizeof(struct game));
     checkMalloc(newGame);
     newGame->turn = FIRST;
+    newGame->moveCount = 0;
     newGame->board = malloc(sizeof(char *) * NUM_ROWS);
     for (int i = 0; i < NUM_ROWS; i++) {
         newGame->board[i] = malloc(sizeof(char) * NUM_COLS);
+        checkMalloc(newGame->board[i]);
         for (int j = 0; j < NUM_COLS; j++) {
             newGame->board[i][j] = BLANK_TOKEN;
         }
@@ -131,13 +133,29 @@ bool hasWon(struct game *game) {
             hasWonDiagonalBLTR(game));
 }
 
-void placeTile(struct game *game, char playerInput, int insertRow) {
+void placeTile(struct game *game, int playerInput, int insertRow) {
     if (insertRow < 0) return;
 
     if (game->board[insertRow][playerInput] != BLANK_TOKEN) {
         placeTile(game, playerInput, insertRow - 1);
     } else {
         game->board[insertRow][playerInput] = tokens[game->turn];
+        game->moveStack[game->moveCount] = playerInput;
+        game->moveCount++;
+    }
+}
+
+void undoMove(struct game *game) {
+    if (game->moveCount > 0) {
+        game->moveCount--;
+        int column = game->moveStack[game->moveCount];
+        for (int i = 0; i < NUM_ROWS; i++) {
+            if (game->board[i][column] != BLANK_TOKEN) {
+                game->board[i][column] = BLANK_TOKEN;
+                game->turn = !game->turn;
+                break;
+            }
+        }
     }
 }
 
@@ -148,6 +166,10 @@ void gameLoop(struct game *game) {
         if (c == 'q') {
             printf("Quitting!\n");
             break;
+        }
+        if (c == 'u') {
+            undoMove(game);
+            continue;
         }
 
         c = c - '0' - 1;
@@ -163,14 +185,13 @@ void gameLoop(struct game *game) {
             break;
         }
 
-        // game->turn != game->turn;
-        if (game->turn == FIRST) {
-            game->turn = SECOND;
-        } else {
-            game->turn = FIRST;
-        }
+        game->turn = !game->turn;
         printBoard(game);
     }
+    for (int i = 0; i < NUM_ROWS; i++) {
+        free(game->board[i]);
+    }
+    free(game->board);
 }
 
 int main() {
