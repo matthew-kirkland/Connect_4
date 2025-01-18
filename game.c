@@ -2,24 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <unistd.h>
 #include <stdbool.h>
+#include <unistd.h>
 
-#define NUM_ROWS 6
-#define NUM_COLS 7
-#define NUM_TO_WIN 4
-
-#define FIRST 0
-#define SECOND 1
-
-#define BLANK_TOKEN '_'
-#define FIRST_TOKEN 'X'
-#define SECOND_TOKEN 'O'
-
-struct game {
-    int turn;
-    char **board;
-};
+#include "include/game.h"
 
 char tokens[] = {FIRST_TOKEN, SECOND_TOKEN};
 
@@ -40,9 +26,11 @@ struct game *initialiseGame() {
     struct game *newGame = malloc(sizeof(struct game));
     checkMalloc(newGame);
     newGame->turn = FIRST;
+    newGame->moveCount = 0;
     newGame->board = malloc(sizeof(char *) * NUM_ROWS);
     for (int i = 0; i < NUM_ROWS; i++) {
         newGame->board[i] = malloc(sizeof(char) * NUM_COLS);
+        checkMalloc(newGame->board[i]);
         for (int j = 0; j < NUM_COLS; j++) {
             newGame->board[i][j] = BLANK_TOKEN;
         }
@@ -145,13 +133,30 @@ bool hasWon(struct game *game) {
             hasWonDiagonalBLTR(game));
 }
 
-void placeTile(struct game *game, char playerInput, int insertRow) {
+void placeTile(struct game *game, int playerInput, int insertRow) {
     if (insertRow < 0) return;
 
     if (game->board[insertRow][playerInput] != BLANK_TOKEN) {
         placeTile(game, playerInput, insertRow - 1);
     } else {
         game->board[insertRow][playerInput] = tokens[game->turn];
+        game->moveStack[game->moveCount] = playerInput;
+        game->moveCount++;
+        game->turn = !game->turn;
+    }
+}
+
+void undoMove(struct game *game) {
+    if (game->moveCount > 0) {
+        game->moveCount--;
+        int column = game->moveStack[game->moveCount];
+        for (int i = 0; i < NUM_ROWS; i++) {
+            if (game->board[i][column] != BLANK_TOKEN) {
+                game->board[i][column] = BLANK_TOKEN;
+                game->turn = !game->turn;
+                break;
+            }
+        }
     }
 }
 
@@ -162,6 +167,10 @@ void gameLoop(struct game *game) {
         if (c == 'q') {
             printf("Quitting!\n");
             break;
+        }
+        if (c == 'u') {
+            undoMove(game);
+            continue;
         }
 
         c = c - '0' - 1;
@@ -176,15 +185,12 @@ void gameLoop(struct game *game) {
             printf("%c has won!", tokens[game->turn]);
             break;
         }
-
-        // game->turn != game->turn;
-        if (game->turn == FIRST) {
-            game->turn = SECOND;
-        } else {
-            game->turn = FIRST;
-        }
         printBoard(game);
     }
+    for (int i = 0; i < NUM_ROWS; i++) {
+        free(game->board[i]);
+    }
+    free(game->board);
 }
 
 int main() {
