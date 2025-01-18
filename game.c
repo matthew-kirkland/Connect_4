@@ -142,6 +142,7 @@ void placeTile(struct game *game, int playerInput, int insertRow) {
         game->board[insertRow][playerInput] = tokens[game->turn];
         game->moveStack[game->moveCount] = playerInput;
         game->moveCount++;
+        game->turn = !game->turn;
     }
 }
 
@@ -184,8 +185,6 @@ void gameLoop(struct game *game) {
             printf("%c has won!", tokens[game->turn]);
             break;
         }
-
-        game->turn = !game->turn;
         printBoard(game);
     }
     for (int i = 0; i < NUM_ROWS; i++) {
