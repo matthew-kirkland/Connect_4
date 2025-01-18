@@ -12,17 +12,17 @@ struct node {
     struct node *children[NUM_COLS];
 };
 
-struct node *createTree(struct game *game, int depth) {
-    struct node *head = newNode();
+struct node *newNode() {
+    struct node *newNode = malloc(sizeof(struct node));
+    newNode->value = 0;
     for (int i = 0; i < NUM_COLS; i++) {
-        if (game->board[0][i] != BLANK_TOKEN) continue;
-        head->children[i] = createBranch(game, 0, depth, i);
+        newNode->children[i] = NULL;
     }
-    return head;
+    return newNode;
 }
 
 struct node *createBranch(struct game *game, int currentHeight, int depth, int column) {
-    if (currentHeight == depth) return;
+    if (currentHeight == depth) return NULL;
     placeTile(game, column, NUM_ROWS - 1);
     struct node *currentNode = newNode();
     currentNode->value = evaluate(game);
@@ -34,15 +34,15 @@ struct node *createBranch(struct game *game, int currentHeight, int depth, int c
     return currentNode;
 }
 
-struct node *newNode() {
-    struct node *newNode = malloc(sizeof(struct node));
-    newNode->value = 0;
+struct node *createTree(struct game *game, int depth) {
+    struct node *head = newNode();
     for (int i = 0; i < NUM_COLS; i++) {
-        newNode->children[i] = NULL;
+        if (game->board[0][i] != BLANK_TOKEN) continue;
+        head->children[i] = createBranch(game, 0, depth, i);
     }
-    return newNode;
+    return head;
 }
 
-int minimax(int depth, ) {
-
+int minimax() {
+    return 0;
 }

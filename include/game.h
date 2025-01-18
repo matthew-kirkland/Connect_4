@@ -32,5 +32,6 @@ bool hasWonDiagonalBLTR(struct game *game);
 bool hasWon(struct game *game);
 void placeTile(struct game *game, int playerInput, int insertRow);
 void gameLoop(struct game *game);
+void undoMove(struct game *game);
 
 #endif

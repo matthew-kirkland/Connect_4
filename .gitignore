@@ -1,1 +1,4 @@
 game.exe
+game.o
+engine/evaluate.o
+engine/minimax.o

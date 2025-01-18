@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 
+#include "../include/game.h"
 #include "../include/evaluate.h"
 
 int evaluate(struct game *game) {
