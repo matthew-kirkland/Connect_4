@@ -48,13 +48,13 @@ void printBoard(struct game *game) {
     }
 }
 
-bool hasWonHorizontal(struct game *game) {
+bool hasWonHorizontal(struct game *game, bool turn) {
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
             if (NUM_COLS - j < NUM_TO_WIN) break;
 
             char t0 = game->board[i][j];
-            if (t0 != tokens[game->turn]) continue;
+            if (t0 != tokens[turn]) continue;
 
             char t1 = game->board[i][j + 1];
             char t2 = game->board[i][j + 2];
@@ -67,13 +67,13 @@ bool hasWonHorizontal(struct game *game) {
     return false;
 }
 
-bool hasWonVertical(struct game *game) {
+bool hasWonVertical(struct game *game, bool turn) {
     for (int j = 0; j < NUM_COLS; j++) {
         for (int i = 0; i < NUM_ROWS; i++) {
             if (NUM_ROWS - i < NUM_TO_WIN) break;
 
             char t0 = game->board[i][j];
-            if (t0 != tokens[game->turn]) continue;
+            if (t0 != tokens[turn]) continue;
 
             char t1 = game->board[i + 1][j];
             char t2 = game->board[i + 2][j];
@@ -86,14 +86,14 @@ bool hasWonVertical(struct game *game) {
     return false;
 }
 
-bool hasWonDiagonalTLBR(struct game *game) {
+bool hasWonDiagonalTLBR(struct game *game, bool turn) {
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
             if (NUM_COLS - j < NUM_TO_WIN ||
                 NUM_ROWS - i < NUM_TO_WIN) break;
 
             char t0 = game->board[i][j];
-            if (t0 != tokens[game->turn]) continue;
+            if (t0 != tokens[turn]) continue;
 
             char t1 = game->board[i + 1][j + 1];
             char t2 = game->board[i + 2][j + 2];
@@ -106,14 +106,14 @@ bool hasWonDiagonalTLBR(struct game *game) {
     return false;
 }
 
-bool hasWonDiagonalBLTR(struct game *game) {
+bool hasWonDiagonalBLTR(struct game *game, bool turn) {
     for (int i = NUM_ROWS - 1; i >= 0; i--) {
         for (int j = 0; j < NUM_COLS; j++) {
             if (NUM_COLS - j < NUM_TO_WIN ||
                 i < NUM_TO_WIN - 1) break;
             
             char t0 = game->board[i][j];
-            if (t0 != tokens[game->turn]) continue;
+            if (t0 != tokens[turn]) continue;
 
             char t1 = game->board[i - 1][j + 1];
             char t2 = game->board[i - 2][j + 2];
@@ -126,11 +126,11 @@ bool hasWonDiagonalBLTR(struct game *game) {
     return false;
 }
 
-bool hasWon(struct game *game) {
-    return (hasWonHorizontal(game) ||
-            hasWonVertical(game) ||
-            hasWonDiagonalTLBR(game) ||
-            hasWonDiagonalBLTR(game));
+bool hasWon(struct game *game, bool turn) {
+    return (hasWonHorizontal(game, turn) ||
+            hasWonVertical(game, turn) ||
+            hasWonDiagonalTLBR(game, turn) ||
+            hasWonDiagonalBLTR(game, turn));
 }
 
 void placeTile(struct game *game, int playerInput, int insertRow) {
@@ -180,7 +180,7 @@ void gameLoop(struct game *game) {
         }
 
         placeTile(game, c, NUM_ROWS - 1);
-        if (hasWon(game)) {
+        if (hasWon(game, game->turn)) {
             printBoard(game);
             printf("%c has won!", tokens[game->turn]);
             break;
