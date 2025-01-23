@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 #include "include/game.h"
+#include "include/minimax.h"
 
 char tokens[] = {FIRST_TOKEN, SECOND_TOKEN};
 
@@ -171,6 +172,11 @@ void gameLoop(struct game *game) {
         if (c == 'u') {
             undoMove(game);
             continue;
+        }
+        if (c == 'h') {
+            struct node *gameTree = createTree(game, 5);
+            struct move bestMove = minimax(gameTree, true);
+            printf("The best move for %c is to play column %d (evaluation of %d)", tokens[game->turn], bestMove.column, bestMove.value);
         }
 
         c = c - '0' - 1;

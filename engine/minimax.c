@@ -7,16 +7,7 @@
 
 #include "../include/game.h"
 #include "../include/evaluate.h"
-
-struct node {
-    int value;
-    struct node *children[NUM_COLS];
-};
-
-struct move {
-    int value;
-    int column;
-};
+#include "../include/minimax.h"
 
 struct node *newNode() {
     struct node *newNode = malloc(sizeof(struct node));
@@ -50,33 +41,6 @@ struct node *createTree(struct game *game, int depth) {
     return createBranch(game, 0, depth, game->turn);
 }
 
-struct move minimax(struct node *node, bool isMax) {
-    if (isLeaf(node)) {
-        return (struct move){ .value = node->value, .column = -1 };
-    }
-
-    struct move bestMove;
-    bestMove.value = isMax ? INT_MIN : INT_MAX;
-    bestMove.column = -1;
-    for (int i = 0; i < NUM_COLS; i++) {
-        if (node->children[i] != NULL) {
-            int childMove = minimax(node->children[i], !isMax);
-            if (isMax) {
-                if (childMove.value > bestMove.value) {
-                    bestMove.value = childMove.value;
-                    bestMove.column = i;
-                }
-            } else {
-                if (childMove.value < bestMove.value) {
-                    bestMove.value = childMove.value;
-                    bestMove.column = i;
-                }
-            }
-        }
-    }
-    return bestMove;
-}
-
 static bool isLeaf(struct node *node) {
     for (int i = 0; i < NUM_COLS; i++) {
         if (node->children[i] != NULL) {
@@ -92,4 +56,31 @@ static int max(int a, int b) {
 
 static int min(int a, int b) {
     return (a < b) ? a : b;
+}
+
+struct move minimax(struct node *node, bool isMax) {
+    if (isLeaf(node)) {
+        return (struct move){ .value = node->value, .column = -1 };
+    }
+
+    struct move bestMove;
+    bestMove.value = isMax ? INT_MIN : INT_MAX;
+    bestMove.column = -1;
+    for (int i = 0; i < NUM_COLS; i++) {
+        if (node->children[i] != NULL) {
+            struct move childMove = minimax(node->children[i], !isMax);
+            if (isMax) {
+                if (childMove.value > bestMove.value) {
+                    bestMove.value = childMove.value;
+                    bestMove.column = i;
+                }
+            } else {
+                if (childMove.value < bestMove.value) {
+                    bestMove.value = childMove.value;
+                    bestMove.column = i;
+                }
+            }
+        }
+    }
+    return bestMove;
 }
