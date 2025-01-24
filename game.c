@@ -39,7 +39,7 @@ struct game *initialiseGame() {
     return newGame;
 }
 
-void printBoard(struct game *game) {
+void printBoard(struct game *game, char message[MAX_MESSAGE_LENGTH]) {
     clearScreen();
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
@@ -47,6 +47,7 @@ void printBoard(struct game *game) {
         }
         printf("\n");
     }
+    printf("%s\n", message);
 }
 
 bool hasWonHorizontal(struct game *game, bool turn) {
@@ -162,9 +163,14 @@ void undoMove(struct game *game) {
 }
 
 void gameLoop(struct game *game) {
-    printBoard(game);
+    char message[MAX_MESSAGE_LENGTH];
+    printBoard(game, message);
     char c;
     while ((c = getchar()) != EOF) {
+        // message[0] = '\0';
+        if (game->moveCount >= 42) {
+            printf("It's a draw!\n");
+        }
         if (c == 'q') {
             printf("Quitting!\n");
             break;
@@ -174,25 +180,26 @@ void gameLoop(struct game *game) {
             continue;
         }
         if (c == 'h') {
-            struct node *gameTree = createTree(game, 5);
+            struct node *gameTree = createTree(game, 6);
             struct move bestMove = minimax(gameTree, true);
-            printf("The best move for %c is to play column %d (evaluation of %d)", tokens[game->turn], bestMove.column, bestMove.value);
+            sprintf(message, "The best move for %c is to play column %d (evaluation of %d)", tokens[game->turn], bestMove.column + 1, bestMove.value);
         }
 
         c = c - '0' - 1;
         if (c < 0 || c > NUM_COLS - 1) {
-            printBoard(game);
+            printBoard(game, message);
             continue;
         }
 
         placeTile(game, c, NUM_ROWS - 1);
-        if (hasWon(game, game->turn)) {
-            printBoard(game);
-            printf("%c has won!", tokens[game->turn]);
+        if (hasWon(game, !game->turn)) {
+            printBoard(game, message);
+            printf("%c has won!\n", tokens[!game->turn]);
             break;
         }
-        printBoard(game);
+        printBoard(game, message);
     }
+    printf("Game ended!\n");
     for (int i = 0; i < NUM_ROWS; i++) {
         free(game->board[i]);
     }

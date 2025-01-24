@@ -19,7 +19,7 @@ int evaluate(struct game *game, bool turn) {
     if (hasWon(game, turn)) {
         score += 1000;
     } else if (hasWon(game, !turn)) {
-        score =- 1000;
+        score -= 1000;
     }
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
