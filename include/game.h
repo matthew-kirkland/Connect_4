@@ -16,7 +16,7 @@
 
 struct game {
     char **board;
-    int moveStack[42];
+    int moveStack[MAX_MOVES];
     int moveCount;
     bool turn;
 };
@@ -25,11 +25,11 @@ extern char tokens[];
 
 struct game *initialiseGame();
 void printBoard(struct game *game);
-bool hasWonHorizontal(struct game *game);
-bool hasWonVertical(struct game *game);
-bool hasWonDiagonalTLBR(struct game *game);
-bool hasWonDiagonalBLTR(struct game *game);
-bool hasWon(struct game *game);
+bool hasWonHorizontal(struct game *game, bool turn);
+bool hasWonVertical(struct game *game, bool turn);
+bool hasWonDiagonalTLBR(struct game *game, bool turn);
+bool hasWonDiagonalBLTR(struct game *game, bool turn);
+bool hasWon(struct game *game, bool turn);
 void placeTile(struct game *game, int playerInput, int insertRow);
 void gameLoop(struct game *game);
 void undoMove(struct game *game);
