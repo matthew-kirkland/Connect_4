@@ -14,8 +14,6 @@
 #define FIRST_TOKEN 'X'
 #define SECOND_TOKEN 'O'
 
-#define MAX_MESSAGE_LENGTH 512
-
 struct game {
     char **board;
     int moveStack[42];
@@ -26,7 +24,7 @@ struct game {
 extern char tokens[];
 
 struct game *initialiseGame();
-void printBoard(struct game *game, char message[MAX_MESSAGE_LENGTH]);
+void printBoard(struct game *game);
 bool hasWonHorizontal(struct game *game, bool turn);
 bool hasWonVertical(struct game *game, bool turn);
 bool hasWonDiagonalTLBR(struct game *game, bool turn);

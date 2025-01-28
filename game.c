@@ -17,11 +17,11 @@ void checkMalloc(void *item) {
     }
 }
 
-void clearScreen() {
-    const char *CLEAR_SCREEN_ANSI = "\033[1;1H\033[2J";
-    write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, strlen(CLEAR_SCREEN_ANSI));
-    fflush(stdout);
-}
+// void clearScreen() {
+//     const char *CLEAR_SCREEN_ANSI = "\033[1;1H\033[2J";
+//     write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, strlen(CLEAR_SCREEN_ANSI));
+//     fflush(stdout);
+// }
 
 struct game *initialiseGame() {
     struct game *newGame = malloc(sizeof(struct game));
@@ -39,15 +39,14 @@ struct game *initialiseGame() {
     return newGame;
 }
 
-void printBoard(struct game *game, char message[MAX_MESSAGE_LENGTH]) {
-    clearScreen();
+void printBoard(struct game *game) {
+    // clearScreen();
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
             printf("%c ", game->board[i][j]);
         }
         printf("\n");
     }
-    printf("%s\n", message);
 }
 
 bool hasWonHorizontal(struct game *game, bool turn) {
@@ -163,14 +162,10 @@ void undoMove(struct game *game) {
 }
 
 void gameLoop(struct game *game) {
-    char message[MAX_MESSAGE_LENGTH];
-    printBoard(game, message);
+    printBoard(game);
     char c;
     while ((c = getchar()) != EOF) {
-        // message[0] = '\0';
-        if (game->moveCount >= 42) {
-            printf("It's a draw!\n");
-        }
+        if (c == '\n') continue;
         if (c == 'q') {
             printf("Quitting!\n");
             break;
@@ -182,22 +177,26 @@ void gameLoop(struct game *game) {
         if (c == 'h') {
             struct node *gameTree = createTree(game, 6);
             struct move bestMove = minimax(gameTree, true);
-            sprintf(message, "The best move for %c is to play column %d (evaluation of %d)", tokens[game->turn], bestMove.column + 1, bestMove.value);
+            printf("The best move for %c is to play column %d (evaluation of %d)\n", tokens[game->turn], bestMove.column + 1, bestMove.value);
         }
 
         c = c - '0' - 1;
         if (c < 0 || c > NUM_COLS - 1) {
-            printBoard(game, message);
+            printBoard(game);
             continue;
         }
 
         placeTile(game, c, NUM_ROWS - 1);
         if (hasWon(game, !game->turn)) {
-            printBoard(game, message);
+            printBoard(game);
             printf("%c has won!\n", tokens[!game->turn]);
             break;
         }
-        printBoard(game, message);
+        if (game->moveCount >= 42) {
+            printf("It's a draw!\n");
+            break;
+        }
+        printBoard(game);
     }
     printf("Game ended!\n");
     for (int i = 0; i < NUM_ROWS; i++) {

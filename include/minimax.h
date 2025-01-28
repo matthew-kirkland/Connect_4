@@ -14,7 +14,7 @@ struct move {
     int column;
 };
 
-struct node *createBranch(struct game *game, int currentHeight, int depth, bool turn);
+struct node *createBranch(struct game *game, int depth, bool turn);
 struct node *createTree(struct game *game, int depth);
 struct move minimax(struct node *node, bool isMax);
 

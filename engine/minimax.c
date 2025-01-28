@@ -18,10 +18,14 @@ struct node *newNode() {
     return newNode;
 }
 
-struct node *createBranch(struct game *game, int currentHeight, int depth, bool turn) {
+struct node *createBranch(struct game *game, int depth, bool turn) {
     struct node *currentNode = newNode();
 
-    if (currentHeight == depth) {
+    if (depth == 0) {
+        currentNode->value = evaluate(game, turn);
+        return currentNode;
+    }
+    if (hasWon(game, turn) || hasWon(game, !turn)) {
         currentNode->value = evaluate(game, turn);
         return currentNode;
     }
@@ -31,14 +35,14 @@ struct node *createBranch(struct game *game, int currentHeight, int depth, bool 
         if (game->board[0][i] != BLANK_TOKEN) continue;
 
         placeTile(game, i, NUM_ROWS - 1);
-        currentNode->children[i] = createBranch(game, currentHeight + 1, depth, !turn);
+        currentNode->children[i] = createBranch(game, depth - 1, turn);
         undoMove(game);
     }
     return currentNode;
 }
 
 struct node *createTree(struct game *game, int depth) {
-    return createBranch(game, 0, depth, game->turn);
+    return createBranch(game, depth, game->turn);
 }
 
 static bool isLeaf(struct node *node) {
