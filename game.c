@@ -23,8 +23,8 @@ void clearScreen() {
     fflush(stdout);
 }
 
-struct game *initialiseGame() {
-    struct game *newGame = malloc(sizeof(struct game));
+Game initialiseGame() {
+    Game newGame = malloc(sizeof(struct game));
     checkMalloc(newGame);
     newGame->turn = FIRST;
     newGame->moveCount = 0;
@@ -39,7 +39,7 @@ struct game *initialiseGame() {
     return newGame;
 }
 
-void printBoard(struct game *game) {
+void printBoard(Game game) {
     clearScreen();
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
@@ -49,7 +49,7 @@ void printBoard(struct game *game) {
     }
 }
 
-bool hasWonHorizontal(struct game *game, bool turn) {
+bool hasWonHorizontal(Game game, bool turn) {
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
             if (NUM_COLS - j < NUM_TO_WIN) break;
@@ -68,7 +68,7 @@ bool hasWonHorizontal(struct game *game, bool turn) {
     return false;
 }
 
-bool hasWonVertical(struct game *game, bool turn) {
+bool hasWonVertical(Game game, bool turn) {
     for (int j = 0; j < NUM_COLS; j++) {
         for (int i = 0; i < NUM_ROWS; i++) {
             if (NUM_ROWS - i < NUM_TO_WIN) break;
@@ -87,7 +87,7 @@ bool hasWonVertical(struct game *game, bool turn) {
     return false;
 }
 
-bool hasWonDiagonalTLBR(struct game *game, bool turn) {
+bool hasWonDiagonalTLBR(Game game, bool turn) {
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
             if (NUM_COLS - j < NUM_TO_WIN ||
@@ -107,7 +107,7 @@ bool hasWonDiagonalTLBR(struct game *game, bool turn) {
     return false;
 }
 
-bool hasWonDiagonalBLTR(struct game *game, bool turn) {
+bool hasWonDiagonalBLTR(Game game, bool turn) {
     for (int i = NUM_ROWS - 1; i >= 0; i--) {
         for (int j = 0; j < NUM_COLS; j++) {
             if (NUM_COLS - j < NUM_TO_WIN ||
@@ -127,14 +127,14 @@ bool hasWonDiagonalBLTR(struct game *game, bool turn) {
     return false;
 }
 
-bool hasWon(struct game *game, bool turn) {
+bool hasWon(Game game, bool turn) {
     return (hasWonHorizontal(game, turn) ||
             hasWonVertical(game, turn) ||
             hasWonDiagonalTLBR(game, turn) ||
             hasWonDiagonalBLTR(game, turn));
 }
 
-void placeTile(struct game *game, int playerInput, int insertRow) {
+void placeTile(Game game, int playerInput, int insertRow) {
     if (insertRow < 0) return;
 
     if (game->board[insertRow][playerInput] != BLANK_TOKEN) {
@@ -147,7 +147,7 @@ void placeTile(struct game *game, int playerInput, int insertRow) {
     }
 }
 
-void undoMove(struct game *game) {
+void undoMove(Game game) {
     if (game->moveCount > 0) {
         game->moveCount--;
         int column = game->moveStack[game->moveCount];
@@ -161,7 +161,7 @@ void undoMove(struct game *game) {
     }
 }
 
-void gameLoop(struct game *game) {
+void gameLoop(Game game) {
     printBoard(game);
     char c;
     while ((c = getchar()) != EOF) {
@@ -180,8 +180,8 @@ void gameLoop(struct game *game) {
             continue;
         }
         if (c == 'h') {
-            struct node *gameTree = createTree(game, 6);
-            struct move bestMove = minimax(gameTree, true);
+            TreeNode gameTree = createTree(game, 6);
+            Move bestMove = minimax(gameTree, true);
             printf("The best move for %c is to play column %d (evaluation of %d)\n", tokens[game->turn], bestMove.column + 1, bestMove.value);
             continue;
         }
@@ -213,6 +213,6 @@ void gameLoop(struct game *game) {
 }
 
 int main() {
-    struct game *game = initialiseGame();
+    Game game = initialiseGame();
     gameLoop(game);
 }

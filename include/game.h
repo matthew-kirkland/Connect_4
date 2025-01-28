@@ -14,6 +14,8 @@
 #define FIRST_TOKEN 'X'
 #define SECOND_TOKEN 'O'
 
+typedef struct game *Game;
+
 struct game {
     char **board;
     int moveStack[MAX_MOVES];

@@ -9,8 +9,8 @@
 #include "../include/evaluate.h"
 #include "../include/minimax.h"
 
-struct node *newNode() {
-    struct node *newNode = malloc(sizeof(struct node));
+TreeNode newNode() {
+    TreeNode newNode = malloc(sizeof(struct node));
     newNode->value = 0;
     for (int i = 0; i < NUM_COLS; i++) {
         newNode->children[i] = NULL;
@@ -18,8 +18,8 @@ struct node *newNode() {
     return newNode;
 }
 
-struct node *createBranch(struct game *game, int depth, bool turn) {
-    struct node *currentNode = newNode();
+TreeNode createBranch(Game game, int depth, bool turn) {
+    TreeNode currentNode = newNode();
 
     if (depth == 0) {
         currentNode->value = evaluate(game, turn);
@@ -41,11 +41,11 @@ struct node *createBranch(struct game *game, int depth, bool turn) {
     return currentNode;
 }
 
-struct node *createTree(struct game *game, int depth) {
+TreeNode createTree(Game game, int depth) {
     return createBranch(game, depth, game->turn);
 }
 
-static bool isLeaf(struct node *node) {
+static bool isLeaf(TreeNode node) {
     for (int i = 0; i < NUM_COLS; i++) {
         if (node->children[i] != NULL) {
             return false;
@@ -54,17 +54,17 @@ static bool isLeaf(struct node *node) {
     return true;
 }
 
-struct move minimax(struct node *node, bool isMax) {
+Move minimax(TreeNode node, bool isMax) {
     if (isLeaf(node)) {
-        return (struct move){ .value = node->value, .column = -1 };
+        return (Move){ .value = node->value, .column = -1 };
     }
 
-    struct move bestMove;
+    Move bestMove;
     bestMove.value = isMax ? INT_MIN : INT_MAX;
     bestMove.column = -1;
     for (int i = 0; i < NUM_COLS; i++) {
         if (node->children[i] != NULL) {
-            struct move childMove = minimax(node->children[i], !isMax);
+            Move childMove = minimax(node->children[i], !isMax);
             if (isMax) {
                 if (childMove.value > bestMove.value) {
                     bestMove.value = childMove.value;
