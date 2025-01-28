@@ -54,14 +54,6 @@ static bool isLeaf(struct node *node) {
     return true;
 }
 
-static int max(int a, int b) {
-    return (a > b) ? a : b;
-}
-
-static int min(int a, int b) {
-    return (a < b) ? a : b;
-}
-
 struct move minimax(struct node *node, bool isMax) {
     if (isLeaf(node)) {
         return (struct move){ .value = node->value, .column = -1 };

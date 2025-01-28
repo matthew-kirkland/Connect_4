@@ -17,11 +17,11 @@ void checkMalloc(void *item) {
     }
 }
 
-// void clearScreen() {
-//     const char *CLEAR_SCREEN_ANSI = "\033[1;1H\033[2J";
-//     write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, strlen(CLEAR_SCREEN_ANSI));
-//     fflush(stdout);
-// }
+void clearScreen() {
+    const char *CLEAR_SCREEN_ANSI = "\033[1;1H\033[2J";
+    write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, strlen(CLEAR_SCREEN_ANSI));
+    fflush(stdout);
+}
 
 struct game *initialiseGame() {
     struct game *newGame = malloc(sizeof(struct game));
@@ -40,7 +40,7 @@ struct game *initialiseGame() {
 }
 
 void printBoard(struct game *game) {
-    // clearScreen();
+    clearScreen();
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
             printf("%c ", game->board[i][j]);
@@ -170,14 +170,20 @@ void gameLoop(struct game *game) {
             printf("Quitting!\n");
             break;
         }
+        if (c == 'w') {
+            printf("It is %c's turn\n", tokens[game->turn]);
+            continue;
+        }
         if (c == 'u') {
             undoMove(game);
+            printBoard(game);
             continue;
         }
         if (c == 'h') {
             struct node *gameTree = createTree(game, 6);
             struct move bestMove = minimax(gameTree, true);
             printf("The best move for %c is to play column %d (evaluation of %d)\n", tokens[game->turn], bestMove.column + 1, bestMove.value);
+            continue;
         }
 
         c = c - '0' - 1;
@@ -192,7 +198,8 @@ void gameLoop(struct game *game) {
             printf("%c has won!\n", tokens[!game->turn]);
             break;
         }
-        if (game->moveCount >= 42) {
+        if (game->moveCount >= MAX_MOVES) {
+            printBoard(game);
             printf("It's a draw!\n");
             break;
         }

@@ -16,7 +16,7 @@
 
 struct game {
     char **board;
-    int moveStack[42];
+    int moveStack[MAX_MOVES];
     int moveCount;
     bool turn;
 };
