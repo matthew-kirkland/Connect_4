@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #include "include/game.h"
 #include "include/minimax.h"
@@ -26,16 +27,10 @@ void clearScreen() {
 Game initialiseGame() {
     Game newGame = malloc(sizeof(struct game));
     checkMalloc(newGame);
-    newGame->turn = FIRST;
+    newGame->p1Board = 0;
+    newGame->p2Board = 0;
     newGame->moveCount = 0;
-    newGame->board = malloc(sizeof(char *) * NUM_ROWS);
-    for (int i = 0; i < NUM_ROWS; i++) {
-        newGame->board[i] = malloc(sizeof(char) * NUM_COLS);
-        checkMalloc(newGame->board[i]);
-        for (int j = 0; j < NUM_COLS; j++) {
-            newGame->board[i][j] = BLANK_TOKEN;
-        }
-    }
+    newGame->turn = FIRST;
     return newGame;
 }
 
@@ -43,48 +38,26 @@ void printBoard(Game game) {
     clearScreen();
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
-            printf("%c ", game->board[i][j]);
+            if ((game->p1Board >> (i * NUM_ROWS + j)) & 1) printf("%c ", tokens[FIRST]);
+            else if ((game->p2Board >> (i * NUM_ROWS + j)) & 1) printf("%c ", tokens[SECOND]);
+            else printf("%c ", BLANK_TOKEN);
         }
         printf("\n");
     }
 }
 
 bool hasWonHorizontal(Game game, bool turn) {
-    for (int i = 0; i < NUM_ROWS; i++) {
-        for (int j = 0; j < NUM_COLS; j++) {
-            if (NUM_COLS - j < NUM_TO_WIN) break;
-
-            char t0 = game->board[i][j];
-            if (t0 != tokens[turn]) continue;
-
-            char t1 = game->board[i][j + 1];
-            char t2 = game->board[i][j + 2];
-            char t3 = game->board[i][j + 3];
-            if (t0 == t1 && t0 == t2 && t0 == t3) {
-                return true;
-            }
-        }
-    }
-    return false;
+    uint64_t board = (turn == FIRST) ? game->p1Board : game->p2Board;
+    uint64_t preventWrapMask = 0x78F1E3C78F;
+    uint64_t check = (board & (board >> 1) & (board >> 2) && (board >> 3)) & preventWrapMask;
+    return check != 0;
 }
 
 bool hasWonVertical(Game game, bool turn) {
-    for (int j = 0; j < NUM_COLS; j++) {
-        for (int i = 0; i < NUM_ROWS; i++) {
-            if (NUM_ROWS - i < NUM_TO_WIN) break;
-
-            char t0 = game->board[i][j];
-            if (t0 != tokens[turn]) continue;
-
-            char t1 = game->board[i + 1][j];
-            char t2 = game->board[i + 2][j];
-            char t3 = game->board[i + 3][j];
-            if (t0 == t1 && t0 == t2 && t0 == t3) {
-                return true;
-            }
-        }
-    }
-    return false;
+    uint64_t board = (turn == FIRST) ? game->p1Board : game->p2Board;
+    uint64_t preventWrapMask = 0x1FFFFF;
+    uint64_t check = board & ((board >> NUM_COLS) & (board >> NUM_COLS * 2) && (board >> NUM_COLS * 3)) & preventWrapMask;
+    return check != 0;
 }
 
 bool hasWonDiagonalTLBR(Game game, bool turn) {

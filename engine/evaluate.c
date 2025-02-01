@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #include "../include/game.h"
 #include "../include/evaluate.h"

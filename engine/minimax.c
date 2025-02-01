@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <limits.h>
+#include <stdint.h>
 
 #include "../include/game.h"
 #include "../include/evaluate.h"
