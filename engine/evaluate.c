@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #include "../include/game.h"
 #include "../include/evaluate.h"
@@ -24,10 +25,18 @@ int evaluate(struct game *game, bool turn) {
     }
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
-            if (game->board[i][j] == tokens[turn]) {
-                score += evaluationTable[i][j];
-            } else if (game->board[i][j] == tokens[!turn]) {
-                score -= evaluationTable[i][j];
+            if (game->turn == FIRST) {
+                if ((game->p1Board >> (j + i * NUM_COLS)) & 1) {
+                    score += evaluationTable[i][j];
+                } else if ((game->p2Board >> (j + i * NUM_COLS)) & 1) {
+                    score -= evaluationTable[i][j];
+                }
+            } else {
+                if ((game->p2Board >> (j + i * NUM_COLS)) & 1) {
+                    score += evaluationTable[i][j];
+                } else if ((game->p1Board >> (j + i * NUM_COLS)) & 1) {
+                    score -= evaluationTable[i][j];
+                }
             }
         }
     }

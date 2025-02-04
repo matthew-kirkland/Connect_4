@@ -17,7 +17,8 @@
 typedef struct game *Game;
 
 struct game {
-    char **board;
+    uint64_t p1Board;
+    uint64_t p2Board;
     int moveStack[MAX_MOVES];
     int moveCount;
     bool turn;

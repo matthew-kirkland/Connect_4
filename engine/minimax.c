@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <limits.h>
+#include <stdint.h>
 
 #include "../include/game.h"
 #include "../include/evaluate.h"
@@ -32,7 +33,8 @@ TreeNode createBranch(Game game, int depth, bool turn) {
 
     currentNode->value = 0;
     for (int i = 0; i < NUM_COLS; i++) {
-        if (game->board[0][i] != BLANK_TOKEN) continue;
+        int tile = ((game->p1Board >> i) & 1) | ((game->p2Board >> i) & 1);
+        if (tile != 0) continue;
 
         placeTile(game, i, NUM_ROWS - 1);
         currentNode->children[i] = createBranch(game, depth - 1, turn);
