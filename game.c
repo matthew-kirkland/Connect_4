@@ -36,7 +36,7 @@ Game initialiseGame() {
 }
 
 void printBoard(Game game) {
-    // clearScreen();
+    clearScreen();
     for (int i = 0; i < NUM_ROWS; i++) {
         for (int j = 0; j < NUM_COLS; j++) {
             if ((game->p1Board >> (i * NUM_COLS + j)) & 1) printf("\033[31m%c \033[0m", tokens[FIRST]);
@@ -143,7 +143,7 @@ void gameLoop(Game game) {
             continue;
         }
         if (c == 'h') {
-            TreeNode gameTree = createTree(game, 6);
+            TreeNode gameTree = createTree(game, 7);
             Move bestMove = minimax(gameTree, true);
             printf("The best move for %c is to play column %d (evaluation of %d)\n", tokens[game->turn], bestMove.column + 1, bestMove.value);
             continue;
