@@ -26,15 +26,15 @@ struct game {
 
 extern char tokens[];
 
-struct game *initialiseGame();
-void printBoard(struct game *game);
-bool hasWonHorizontal(struct game *game, bool turn);
-bool hasWonVertical(struct game *game, bool turn);
-bool hasWonDiagonalTLBR(struct game *game, bool turn);
-bool hasWonDiagonalBLTR(struct game *game, bool turn);
-bool hasWon(struct game *game, bool turn);
-void placeTile(struct game *game, int playerInput, int insertRow);
-void gameLoop(struct game *game);
-void undoMove(struct game *game);
+Game initialiseGame();
+void printBoard(Game game);
+bool hasWonHorizontal(Game game, bool turn);
+bool hasWonVertical(Game game, bool turn);
+bool hasWonDiagonalTLBR(Game game, bool turn);
+bool hasWonDiagonalBLTR(Game game, bool turn);
+bool hasWon(Game game, bool turn);
+void placeTile(Game game, int playerInput, int insertRow);
+void gameLoop(Game game);
+void undoMove(Game game);
 
 #endif

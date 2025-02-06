@@ -3,6 +3,6 @@
 
 #include "../include/game.h"
 
-int evaluate(struct game *game, bool turn);
+int evaluate(Game game, bool turn);
 
 #endif
