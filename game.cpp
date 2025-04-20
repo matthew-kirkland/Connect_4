@@ -1,13 +1,7 @@
 #include "include/game.h"
+#include "include/minimax.h"
 
 char tokens[] = {FIRST_TOKEN, SECOND_TOKEN};
-
-Game::Game() {
-    p1Board = 0;
-    p2Board = 0;
-    moveCount = 0;
-    turn = FIRST;
-}
 
 void Game::clearScreen() const {
     const char *CLEAR_SCREEN_ANSI = "\033[1;1H\033[2J";
@@ -127,7 +121,7 @@ void Game::gameLoop() {
             continue;
         }
         if (c == 'h') {
-            TreeNode gameTree = createTree(game, 7);
+            TreeNode *gameTree = createTree(*this, 7);
             Move bestMove = minimax(gameTree, true);
             std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
             continue;
@@ -153,4 +147,11 @@ void Game::gameLoop() {
         printBoard();
     }
     std::cout << "Game ended!\n";
+}
+
+int main() {
+    Game game;
+    game.gameLoop();
+
+    return 0;
 }
