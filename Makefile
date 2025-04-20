@@ -15,13 +15,11 @@ else
     endif
 endif
 
-# Use g++ for C++ code
 CXX = g++
 
 CXXFLAGS = -Wall -Wextra
 INCLUDES = -Iinclude
 
-# List your .cpp source files here
 SRC = game.cpp engine/evaluate.cpp engine/minimax.cpp
 
 OBJ = $(SRC:.cpp=.o)
