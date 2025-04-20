@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <cstdint>
+#include <cstring>
 #include <unistd.h>
 
 #define NUM_ROWS 6

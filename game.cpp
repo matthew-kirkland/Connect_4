@@ -86,7 +86,7 @@ void Game::placeTile(int playerInput, int insertRow) {
     }
 }
 
-void Game::undoMove(struct game *game) {
+void Game::undoMove() {
     if (moveCount > 0) {
         turn = !turn;
         moveCount--;
@@ -129,7 +129,7 @@ void Game::gameLoop() {
         if (c == 'h') {
             TreeNode gameTree = createTree(game, 7);
             Move bestMove = minimax(gameTree, true);
-            std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1<< " (evaluation of " << bestMove.value << ")\n";
+            std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
             continue;
         }
 
@@ -139,8 +139,8 @@ void Game::gameLoop() {
             continue;
         }
 
-        placeTile(game, c, NUM_ROWS - 1);
-        if (hasWon(game, !turn)) {
+        placeTile(c, NUM_ROWS - 1);
+        if (hasWon(!turn)) {
             printBoard();
             std::cout << tokens[!turn] << " has won!\n";
             break;
