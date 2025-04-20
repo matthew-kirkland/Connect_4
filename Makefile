@@ -15,23 +15,24 @@ else
     endif
 endif
 
-CC = gcc
+# Use g++ for C++ code
+CXX = g++
 
-CFLAGS = -Wall -Wextra
-
+CXXFLAGS = -Wall -Wextra
 INCLUDES = -Iinclude
 
-SRC = game.c engine/evaluate.c engine/minimax.c
+# List your .cpp source files here
+SRC = game.cpp engine/evaluate.cpp engine/minimax.cpp
 
-OBJ = $(SRC:.c=.o)
+OBJ = $(SRC:.cpp=.o)
 
 DEPS = include/game.h include/evaluate.h include/minimax.h
 
 $(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $(TARGET)
 
-%.o: %.c
-	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+%.o: %.cpp $(DEPS)
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
 	$(RM) *.o
