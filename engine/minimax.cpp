@@ -1,53 +1,32 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <stdbool.h>
-#include <string.h>
-#include <limits.h>
-#include <stdint.h>
-
 #include "../include/game.h"
 #include "../include/evaluate.h"
 #include "../include/minimax.h"
 
-TreeNode newNode() {
-    TreeNode newNode = malloc(sizeof(struct node));
-    newNode->value = 0;
-    for (int i = 0; i < NUM_COLS; i++) {
-        newNode->children[i] = NULL;
-    }
-    return newNode;
-}
+TreeNode *createBranch(Game &game, int depth, bool turn) {
+    TreeNode *currentNode = new TreeNode();
 
-TreeNode createBranch(Game game, int depth, bool turn) {
-    TreeNode currentNode = newNode();
-
-    if (depth == 0) {
-        currentNode->value = evaluate(game, turn);
-        return currentNode;
-    }
-    if (hasWon(game, turn) || hasWon(game, !turn)) {
+    if (depth == 0 || game.hasWon(turn) || game.hasWon(!turn)) {
         currentNode->value = evaluate(game, turn);
         return currentNode;
     }
 
     currentNode->value = 0;
     for (int i = 0; i < NUM_COLS; i++) {
-        int tile = ((game->p1Board >> i) & 1) | ((game->p2Board >> i) & 1);
+        int tile = ((game.p1Board >> i) & 1) | ((game.p2Board >> i) & 1);
         if (tile != 0) continue;
 
-        placeTile(game, i, NUM_ROWS - 1);
+        game.placeTile(i, NUM_ROWS - 1);
         currentNode->children[i] = createBranch(game, depth - 1, turn);
-        undoMove(game);
+        game.undoMove();
     }
     return currentNode;
 }
 
-TreeNode createTree(Game game, int depth) {
-    return createBranch(game, depth, game->turn);
+TreeNode *createTree(Game &game, int depth) {
+    return createBranch(game, depth, game.turn);
 }
 
-static bool isLeaf(TreeNode node) {
+static inline bool isLeaf(TreeNode *node) {
     for (int i = 0; i < NUM_COLS; i++) {
         if (node->children[i] != NULL) {
             return false;
@@ -56,14 +35,12 @@ static bool isLeaf(TreeNode node) {
     return true;
 }
 
-Move minimax(TreeNode node, bool isMax) {
+Move minimax(TreeNode *node, bool isMax) {
     if (isLeaf(node)) {
-        return (Move){ .value = node->value, .column = -1 };
+        return Move{node->value, -1};
     }
 
-    Move bestMove;
-    bestMove.value = isMax ? INT_MIN : INT_MAX;
-    bestMove.column = -1;
+    Move bestMove(isMax ? INT_MIN : INT_MAX, -1);
     for (int i = 0; i < NUM_COLS; i++) {
         if (node->children[i] != NULL) {
             Move childMove = minimax(node->children[i], !isMax);

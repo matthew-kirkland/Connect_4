@@ -1,8 +1,14 @@
 #ifndef EVALUATE_H
 #define EVALUATE_H
 
-#include "../include/game.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <cstring>
+#include <climits>
+#include <cstdint>
+#include <array>
 
-int evaluate(Game game, bool turn);
+int evaluate(Game &game, bool turn);
 
 #endif
