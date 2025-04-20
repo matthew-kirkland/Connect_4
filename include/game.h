@@ -23,26 +23,29 @@
 extern char tokens[];
 
 class Game {
-    private:
-        uint64_t p1Board;
-        uint64_t p2Board;
-        int moveStack[MAX_MOVES];
-        int moveCount;
-        bool turn;
-    
-    public:
-        Game();
+public:
+    uint64_t p1Board;
+    uint64_t p2Board;
+    int moveStack[MAX_MOVES];
+    int moveCount;
+    bool turn;
+    Game() {
+        p1Board = 0;
+        p2Board = 0;
+        moveCount = 0;
+        turn = FIRST;
+    }
 
-        void clearScreen() const;
-        void printBoard() const;
-        bool hasWonHorizontal(bool who) const;
-        bool hasWonVertical(bool who) const;
-        bool hasWonDiagonalTLBR(bool who) const;
-        bool hasWonDiagonalBLTR(bool who) const;
-        bool hasWon(bool who) const;
-        void placeTile(int playerInput, int insertRow);
-        void gameLoop();
-        void undoMove();
-    };
+    void clearScreen() const;
+    void printBoard() const;
+    bool hasWonHorizontal(bool who) const;
+    bool hasWonVertical(bool who) const;
+    bool hasWonDiagonalTLBR(bool who) const;
+    bool hasWonDiagonalBLTR(bool who) const;
+    bool hasWon(bool who) const;
+    void placeTile(int playerInput, int insertRow);
+    void gameLoop();
+    void undoMove();
+};
 
 #endif
