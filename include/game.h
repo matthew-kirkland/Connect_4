@@ -44,8 +44,9 @@ public:
     bool hasWonDiagonalBLTR(bool who) const;
     bool hasWon(bool who) const;
     void placeTile(int playerInput, int insertRow);
-    void gameLoop();
     void undoMove();
+    void switchTurn();
+    void gameLoop();
 };
 
 #endif

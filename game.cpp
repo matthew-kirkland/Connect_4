@@ -76,30 +76,30 @@ void Game::placeTile(int playerInput, int insertRow) {
         }
         moveStack[moveCount] = playerInput;
         moveCount++;
-        turn = !turn;
     }
 }
 
 void Game::undoMove() {
-    if (moveCount > 0) {
-        turn = !turn;
-        moveCount--;
-        int column = moveStack[moveCount];
-        uint64_t mask = 1;
-        for (int i = 0; i < NUM_ROWS; i++) {
-            if (turn == FIRST) {
-                if ((p1Board >> (column + i * NUM_COLS)) & 1) {
-                    p1Board ^= (mask << (column + i * NUM_COLS));
-                    break;
-                }
-            } else {
-                if ((p2Board >> (column + i * NUM_COLS)) & 1) {
-                    p2Board ^= (mask << (column + i * NUM_COLS));
-                    break;
-                }
+    moveCount--;
+    int column = moveStack[moveCount];
+    uint64_t mask = 1;
+    for (int i = 0; i < NUM_ROWS; i++) {
+        if (turn == FIRST) {
+            if ((p1Board >> (column + i * NUM_COLS)) & 1) {
+                p1Board ^= (mask << (column + i * NUM_COLS));
+                break;
+            }
+        } else {
+            if ((p2Board >> (column + i * NUM_COLS)) & 1) {
+                p2Board ^= (mask << (column + i * NUM_COLS));
+                break;
             }
         }
     }
+}
+
+void Game::switchTurn() {
+    turn = !turn;
 }
 
 void Game::gameLoop() {
@@ -115,7 +115,8 @@ void Game::gameLoop() {
             std::cout << "It is " << tokens[turn] << "'s turn\n";
             continue;
         }
-        if (c == 'u') {
+        if (c == 'u' && moveCount > 0) {
+            switchTurn();
             undoMove();
             printBoard();
             continue;
@@ -134,11 +135,12 @@ void Game::gameLoop() {
         }
 
         placeTile(c, NUM_ROWS - 1);
-        if (hasWon(!turn)) {
+        if (hasWon(turn)) {
             printBoard();
-            std::cout << tokens[!turn] << " has won!\n";
+            std::cout << tokens[turn] << " has won!\n";
             break;
         }
+        switchTurn();
         if (moveCount >= MAX_MOVES) {
             printBoard();
             std::cout << "It's a draw!\n";

@@ -1,7 +1,7 @@
 #include "../include/game.h"
 #include "../include/evaluate.h"
 
-int evaluate(Game &game, bool turn) {
+int evaluate(Game &game) {
     std::array<std::array<int, NUM_COLS>, NUM_ROWS> evaluationTable = {{
         {3, 4, 5, 7, 5, 4, 3},
         {4, 6, 8, 10, 8, 6, 4},
@@ -11,10 +11,10 @@ int evaluate(Game &game, bool turn) {
         {3, 4, 5, 7, 5, 4, 3}
     }};
     int score = 0;
-    if (game.hasWon(turn)) {
+    if (game.hasWon(game.turn)) {
         score += 1000;
     }
-    if (game.hasWon(!turn)) {
+    if (game.hasWon(!game.turn)) {
         score -= 1000;
     }
     for (int i = 0; i < NUM_ROWS; i++) {
