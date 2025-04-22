@@ -45,7 +45,6 @@ public:
     bool hasWon(bool who) const;
     void placeTile(int playerInput, int insertRow);
     void undoMove();
-    void switchTurn();
     void gameLoop();
 };
 

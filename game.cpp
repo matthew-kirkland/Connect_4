@@ -100,10 +100,6 @@ void Game::undoMove() {
     }
 }
 
-void Game::switchTurn() {
-    turn = !turn;
-}
-
 void Game::gameLoop() {
     printBoard();
     char c;
