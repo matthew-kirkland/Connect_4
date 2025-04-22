@@ -122,8 +122,9 @@ void Game::gameLoop() {
             continue;
         }
         if (c == 'h') {
-            TreeNode *gameTree = createTree(*this, 7);
-            Move bestMove = minimax(gameTree, true);
+            // TreeNode *gameTree = createTree(*this, 7);
+            Game localCopy = *this;
+            Move bestMove = minimax(localCopy, 6, true);
             std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
             continue;
         }
