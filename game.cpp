@@ -76,11 +76,13 @@ void Game::placeTile(int playerInput, int insertRow) {
         }
         moveStack[moveCount] = playerInput;
         moveCount++;
+        turn = !turn;
     }
 }
 
 void Game::undoMove() {
     moveCount--;
+    turn = !turn;
     int column = moveStack[moveCount];
     uint64_t mask = 1;
     for (int i = 0; i < NUM_ROWS; i++) {
@@ -116,15 +118,12 @@ void Game::gameLoop() {
             continue;
         }
         if (c == 'u' && moveCount > 0) {
-            switchTurn();
             undoMove();
             printBoard();
             continue;
         }
         if (c == 'h') {
-            // TreeNode *gameTree = createTree(*this, 7);
-            Game localCopy = *this;
-            Move bestMove = minimax(localCopy, 6, true);
+            Move bestMove = minimax(*this, 7, turn);
             std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
             continue;
         }
@@ -136,12 +135,11 @@ void Game::gameLoop() {
         }
 
         placeTile(c, NUM_ROWS - 1);
-        if (hasWon(turn)) {
+        if (hasWon(!turn)) {
             printBoard();
-            std::cout << tokens[turn] << " has won!\n";
+            std::cout << tokens[!turn] << " has won!\n";
             break;
         }
-        switchTurn();
         if (moveCount >= MAX_MOVES) {
             printBoard();
             std::cout << "It's a draw!\n";

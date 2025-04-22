@@ -9,6 +9,6 @@
 #include <cstdint>
 #include <array>
 
-int evaluate(Game &game);
+int evaluate(Game &game, bool turn);
 
 #endif
