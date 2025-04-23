@@ -60,6 +60,10 @@ bool Game::hasWon(bool who) const {
             hasWonDiagonalBLTR(who));
 }
 
+bool Game::columnFull(int col) const {
+    return (((p1Board >> col) & 1) | ((p2Board >> col) & 1));
+}
+
 void Game::placeTile(int playerInput, int insertRow) {
     if (insertRow < 0) return;
 
