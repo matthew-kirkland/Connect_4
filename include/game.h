@@ -43,9 +43,10 @@ public:
     bool hasWonDiagonalTLBR(bool who) const;
     bool hasWonDiagonalBLTR(bool who) const;
     bool hasWon(bool who) const;
+    bool columnFull(int col) const;
     void placeTile(int playerInput, int insertRow);
-    void gameLoop();
     void undoMove();
+    void gameLoop();
 };
 
 #endif

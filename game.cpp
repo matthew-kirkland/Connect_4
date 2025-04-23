@@ -60,6 +60,10 @@ bool Game::hasWon(bool who) const {
             hasWonDiagonalBLTR(who));
 }
 
+bool Game::columnFull(int col) const {
+    return (((p1Board >> col) & 1) | ((p2Board >> col) & 1));
+}
+
 void Game::placeTile(int playerInput, int insertRow) {
     if (insertRow < 0) return;
 
@@ -81,22 +85,20 @@ void Game::placeTile(int playerInput, int insertRow) {
 }
 
 void Game::undoMove() {
-    if (moveCount > 0) {
-        turn = !turn;
-        moveCount--;
-        int column = moveStack[moveCount];
-        uint64_t mask = 1;
-        for (int i = 0; i < NUM_ROWS; i++) {
-            if (turn == FIRST) {
-                if ((p1Board >> (column + i * NUM_COLS)) & 1) {
-                    p1Board ^= (mask << (column + i * NUM_COLS));
-                    break;
-                }
-            } else {
-                if ((p2Board >> (column + i * NUM_COLS)) & 1) {
-                    p2Board ^= (mask << (column + i * NUM_COLS));
-                    break;
-                }
+    moveCount--;
+    turn = !turn;
+    int column = moveStack[moveCount];
+    uint64_t mask = 1;
+    for (int i = 0; i < NUM_ROWS; i++) {
+        if (turn == FIRST) {
+            if ((p1Board >> (column + i * NUM_COLS)) & 1) {
+                p1Board ^= (mask << (column + i * NUM_COLS));
+                break;
+            }
+        } else {
+            if ((p2Board >> (column + i * NUM_COLS)) & 1) {
+                p2Board ^= (mask << (column + i * NUM_COLS));
+                break;
             }
         }
     }
@@ -115,14 +117,13 @@ void Game::gameLoop() {
             std::cout << "It is " << tokens[turn] << "'s turn\n";
             continue;
         }
-        if (c == 'u') {
+        if (c == 'u' && moveCount > 0) {
             undoMove();
             printBoard();
             continue;
         }
         if (c == 'h') {
-            TreeNode *gameTree = createTree(*this, 7);
-            Move bestMove = minimax(gameTree, true);
+            Move bestMove = minimax(*this, 7, turn);
             std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
             continue;
         }

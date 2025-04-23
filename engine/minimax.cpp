@@ -2,60 +2,22 @@
 #include "../include/evaluate.h"
 #include "../include/minimax.h"
 
-TreeNode *createBranch(Game &game, int depth, bool turn) {
-    TreeNode *currentNode = new TreeNode();
-
-    if (depth == 0 || game.hasWon(turn) || game.hasWon(!turn)) {
-        currentNode->value = evaluate(game, turn);
-        return currentNode;
+Move minimax(Game game, int depth, bool originalPlayer) {
+    if (depth == 0 || game.hasWon(game.turn) || game.hasWon(!game.turn) || game.moveCount >= MAX_MOVES) {
+        return Move(evaluate(game, originalPlayer), -1);
     }
-
-    currentNode->value = 0;
-    for (int i = 0; i < NUM_COLS; i++) {
-        int tile = ((game.p1Board >> i) & 1) | ((game.p2Board >> i) & 1);
-        if (tile != 0) continue;
-
-        game.placeTile(i, NUM_ROWS - 1);
-        currentNode->children[i] = createBranch(game, depth - 1, turn);
-        game.undoMove();
-    }
-    return currentNode;
-}
-
-TreeNode *createTree(Game &game, int depth) {
-    return createBranch(game, depth, game.turn);
-}
-
-static inline bool isLeaf(TreeNode *node) {
-    for (int i = 0; i < NUM_COLS; i++) {
-        if (node->children[i] != NULL) {
-            return false;
-        }
-    }
-    return true;
-}
-
-Move minimax(TreeNode *node, bool isMax) {
-    if (isLeaf(node)) {
-        return Move{node->value, -1};
-    }
-
+    bool isMax = (game.turn == originalPlayer);
     Move bestMove(isMax ? INT_MIN : INT_MAX, -1);
     for (int i = 0; i < NUM_COLS; i++) {
-        if (node->children[i] != NULL) {
-            Move childMove = minimax(node->children[i], !isMax);
-            if (isMax) {
-                if (childMove.value > bestMove.value) {
-                    bestMove.value = childMove.value;
-                    bestMove.column = i;
-                }
-            } else {
-                if (childMove.value < bestMove.value) {
-                    bestMove.value = childMove.value;
-                    bestMove.column = i;
-                }
-            }
+        if (game.columnFull(i)) continue;
+
+        game.placeTile(i, NUM_ROWS - 1);
+        Move childMove = minimax(game, depth - 1, originalPlayer);
+        if ((isMax && childMove.value > bestMove.value) || (!isMax && childMove.value < bestMove.value)) {
+            bestMove.value = childMove.value;
+            bestMove.column = i;
         }
+        game.undoMove();
     }
     return bestMove;
 }
