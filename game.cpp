@@ -123,7 +123,7 @@ void Game::gameLoop() {
             continue;
         }
         if (c == 'h') {
-            Move bestMove = minimax(*this, 7, turn);
+            Move bestMove = minimax(*this, 8, INT_MIN, INT_MAX, turn);
             std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
             continue;
         }
