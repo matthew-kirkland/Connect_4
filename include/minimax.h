@@ -28,6 +28,6 @@ struct Move {
 
 TreeNode *createBranch(Game &game, int depth, bool turn);
 TreeNode *createTree(Game &game, int depth);
-Move minimax(Game game, int depth, bool originalPlayer);
+Move minimax(Game game, int depth, int alpha, int beta, bool originalPlayer);
 
 #endif

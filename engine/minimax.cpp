@@ -2,7 +2,7 @@
 #include "../include/evaluate.h"
 #include "../include/minimax.h"
 
-Move minimax(Game game, int depth, bool originalPlayer) {
+Move minimax(Game game, int depth, int alpha, int beta, bool originalPlayer) {
     if (depth == 0 || game.hasWon(game.turn) || game.hasWon(!game.turn) || game.moveCount >= MAX_MOVES) {
         return Move(evaluate(game, originalPlayer), -1);
     }
@@ -12,12 +12,19 @@ Move minimax(Game game, int depth, bool originalPlayer) {
         if (game.columnFull(i)) continue;
 
         game.placeTile(i, NUM_ROWS - 1);
-        Move childMove = minimax(game, depth - 1, originalPlayer);
+        Move childMove = minimax(game, depth - 1, alpha, beta, originalPlayer);
+        game.undoMove();
         if ((isMax && childMove.value > bestMove.value) || (!isMax && childMove.value < bestMove.value)) {
             bestMove.value = childMove.value;
             bestMove.column = i;
         }
-        game.undoMove();
+        if (isMax) {
+            if (bestMove.value >= beta) break;
+            alpha = std::max(alpha, bestMove.value);
+        } else {
+            if (bestMove.value <= alpha) break;
+            beta = std::min(beta, bestMove.value);
+        }
     }
     return bestMove;
 }
