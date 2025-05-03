@@ -1,5 +1,5 @@
 #include "include/game.h"
-#include "include/minimax.h"
+#include "include/engine.h"
 
 char tokens[] = {FIRST_TOKEN, SECOND_TOKEN};
 
