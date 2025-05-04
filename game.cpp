@@ -150,9 +150,9 @@ void Game::gameLoop() {
     std::cout << "Game ended!\n";
 }
 
-int main() {
-    Game game;
-    game.gameLoop();
+// int main() {
+//     Game game;
+//     game.gameLoop();
 
-    return 0;
-}
+//     return 0;
+// }
