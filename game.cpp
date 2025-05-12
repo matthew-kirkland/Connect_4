@@ -104,55 +104,17 @@ void Game::undoMove() {
     }
 }
 
-void Game::gameLoop() {
-    printBoard();
-    char c;
-    while ((c = getchar()) != EOF) {
-        if (c == '\n') continue;
-        if (c == 'q') {
-            std::cout << "Quitting!\n";
-            break;
-        }
-        if (c == 'w') {
-            std::cout << "It is " << tokens[turn] << "'s turn\n";
-            continue;
-        }
-        if (c == 'u' && moveCount > 0) {
-            undoMove();
-            printBoard();
-            continue;
-        }
-        if (c == 'h') {
-            Move bestMove = minimax(*this, 8, INT_MIN, INT_MAX, turn);
-            std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
-            continue;
-        }
-
-        c = c - '0' - 1;
-        if (c < 0 || c > NUM_COLS - 1) {
-            printBoard();
-            continue;
-        }
-
-        placeTile(c, NUM_ROWS - 1);
-        if (hasWon(!turn)) {
-            printBoard();
-            std::cout << tokens[!turn] << " has won!\n";
-            break;
-        }
-        if (moveCount >= MAX_MOVES) {
-            printBoard();
-            std::cout << "It's a draw!\n";
-            break;
-        }
-        printBoard();
-    }
-    std::cout << "Game ended!\n";
+void Game::endGame() {
+    isActive = false;
 }
 
-// int main() {
-//     Game game;
-//     game.gameLoop();
-
-//     return 0;
-// }
+void Game::resetGame() {
+    p1Board = 0;
+    p2Board = 0;
+    moveCount = 0;
+    turn = FIRST;
+    isActive = true;
+    for (int i = 0; i < MAX_MOVES; i++) {
+        moveStack[i] = -1;
+    }
+}

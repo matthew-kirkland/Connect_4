@@ -29,11 +29,13 @@ public:
     int moveStack[MAX_MOVES];
     int moveCount;
     bool turn;
+    bool isActive;
     Game() {
         p1Board = 0;
         p2Board = 0;
         moveCount = 0;
         turn = FIRST;
+        isActive = true;
     }
 
     void clearScreen() const;
@@ -47,6 +49,8 @@ public:
     void placeTile(int playerInput, int insertRow);
     void undoMove();
     void gameLoop();
+    void endGame();
+    void resetGame();
 };
 
 #endif
