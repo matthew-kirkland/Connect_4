@@ -10,6 +10,6 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(Connect_4 game.cpp engine.cpp gui.cpp)
+add_executable(Connect_4 game.cpp engine.cpp application.cpp)
 target_compile_features(Connect_4 PRIVATE cxx_std_17)
 target_link_libraries(Connect_4 PRIVATE SFML::Graphics)
