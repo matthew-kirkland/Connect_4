@@ -3,28 +3,6 @@
 
 char tokens[] = {FIRST_TOKEN, SECOND_TOKEN};
 
-void Game::clearScreen() const {
-    const char *CLEAR_SCREEN_ANSI = "\033[1;1H\033[2J";
-    write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, strlen(CLEAR_SCREEN_ANSI));
-    fflush(stdout);
-}
-
-void Game::printBoard() const {
-    clearScreen();
-    for (int i = 0; i < NUM_ROWS; i++) {
-        for (int j = 0; j < NUM_COLS; j++) {
-            if ((p1Board >> (i * NUM_COLS + j)) & 1) {
-                std::cout << "\033[31m" << tokens[FIRST] << " \033[0m";
-            } else if ((p2Board >> (i * NUM_COLS + j)) & 1) {
-                std::cout << "\033[33m" << tokens[SECOND] << " \033[0m";
-            } else {
-                std::cout << BLANK_TOKEN << " ";
-            }
-        }
-        std::cout << "\n";
-    }
-}
-
 bool Game::hasWonHorizontal(bool who) const {
     uint64_t board = (who == FIRST) ? p1Board : p2Board;
     uint64_t preventWrapMask = 0x78F1E3C78F;

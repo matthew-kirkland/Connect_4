@@ -3,6 +3,11 @@
 #include "include/application.h"
 
 void Application::run(Game game) {
+    sf::Sprite boardSprite(boardTexture);
+    sf::Sprite redTokenSprite(redTokenTexture);
+    sf::Sprite yellowTokenSprite(yellowTokenTexture);
+    Engine engine;
+
     while (window.isOpen()) {
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
@@ -10,26 +15,26 @@ void Application::run(Game game) {
                 break;
             }
             if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-                if (keyPressed->scancode == sf::KeyPressed::Scancode::Num1) {
+                if (keyPressed->scancode == sf::Keyboard::Scancode::Num1) {
                     game.placeTile(0, NUM_ROWS - 1);
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::Num2) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2) {
                     game.placeTile(1, NUM_ROWS - 1);
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::Num3) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::Num3) {
                     game.placeTile(2, NUM_ROWS - 1);
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::Num4) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::Num4) {
                     game.placeTile(3, NUM_ROWS - 1);
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::Num5) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::Num5) {
                     game.placeTile(4, NUM_ROWS - 1);
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::Num6) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::Num6) {
                     game.placeTile(5, NUM_ROWS - 1);
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::Num7) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::Num7) {
                     game.placeTile(6, NUM_ROWS - 1);
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::U) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::U) {
                     game.undoMove();
-                } else if (keyPressed->scancode == sf::KeyPressed:Scancode::H) {
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::H) {
                     Move bestMove = engine.findBestMove(game, ENGINE_DEPTH);
-                    std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
-                } else if (keyPressed->scancode == sf::KeyPressed::Scancode::R) {
+                    std::cout << "The best move for " << tokens[game.turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
+                } else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
                     game.resetGame();
                 } else {
                     std::cout << "Invalid key pressed\n";
@@ -42,8 +47,9 @@ void Application::run(Game game) {
             }
         }
         // if someone won or it was a draw, end the game loop
-        if (game.hasWon(turn) || game.moveCount >= MAX_MOVES) {
+        if (game.hasWon(game.turn) || game.moveCount >= MAX_MOVES) {
             game.endGame();
+            std::cout << tokens[game.turn] << " has won!\n";
         }
         window.clear(sf::Color::Black);
         window.draw(boardSprite);
