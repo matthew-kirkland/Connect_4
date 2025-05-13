@@ -1,7 +1,38 @@
 #include "include/game.h"
 #include "include/engine.h"
 
-int evaluate(Game game, bool turn) {
+Move Engine::findBestMove(Game game, int depth) {
+    return minimax(game, depth, INT_MIN, INT_MAX, game.turn);
+}
+
+Move Engine::minimax(Game game, int depth, int alpha, int beta, bool originalPlayer) {
+    if (depth == 0 || game.hasWon(game.turn) || game.hasWon(!game.turn) || game.moveCount >= MAX_MOVES) {
+        return Move(evaluate(game, originalPlayer), -1);
+    }
+    bool isMax = (game.turn == originalPlayer);
+    Move bestMove(isMax ? INT_MIN : INT_MAX, -1);
+    for (int i = 0; i < NUM_COLS; i++) {
+        if (game.columnFull(i)) continue;
+
+        game.placeTile(i, NUM_ROWS - 1);
+        Move childMove = minimax(game, depth - 1, alpha, beta, originalPlayer);
+        game.undoMove();
+        if ((isMax && childMove.value > bestMove.value) || (!isMax && childMove.value < bestMove.value)) {
+            bestMove.value = childMove.value;
+            bestMove.column = i;
+        }
+        if (isMax) {
+            if (bestMove.value >= beta) break;
+            alpha = std::max(alpha, bestMove.value);
+        } else {
+            if (bestMove.value <= alpha) break;
+            beta = std::min(beta, bestMove.value);
+        }
+    }
+    return bestMove;
+}
+
+int Engine::evaluate(Game game, bool turn) {
     std::array<std::array<int, NUM_COLS>, NUM_ROWS> evaluationTable = {{
         {3, 4, 5, 7, 5, 4, 3},
         {4, 6, 8, 10, 8, 6, 4},
@@ -35,31 +66,4 @@ int evaluate(Game game, bool turn) {
         }
     }
     return score;
-}
-
-Move minimax(Game game, int depth, int alpha, int beta, bool originalPlayer) {
-    if (depth == 0 || game.hasWon(game.turn) || game.hasWon(!game.turn) || game.moveCount >= MAX_MOVES) {
-        return Move(evaluate(game, originalPlayer), -1);
-    }
-    bool isMax = (game.turn == originalPlayer);
-    Move bestMove(isMax ? INT_MIN : INT_MAX, -1);
-    for (int i = 0; i < NUM_COLS; i++) {
-        if (game.columnFull(i)) continue;
-
-        game.placeTile(i, NUM_ROWS - 1);
-        Move childMove = minimax(game, depth - 1, alpha, beta, originalPlayer);
-        game.undoMove();
-        if ((isMax && childMove.value > bestMove.value) || (!isMax && childMove.value < bestMove.value)) {
-            bestMove.value = childMove.value;
-            bestMove.column = i;
-        }
-        if (isMax) {
-            if (bestMove.value >= beta) break;
-            alpha = std::max(alpha, bestMove.value);
-        } else {
-            if (bestMove.value <= alpha) break;
-            beta = std::min(beta, bestMove.value);
-        }
-    }
-    return bestMove;
 }
