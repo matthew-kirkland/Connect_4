@@ -38,19 +38,18 @@ public:
         isActive = true;
     }
 
-    void clearScreen() const;
-    void printBoard() const;
-    bool hasWonHorizontal(bool who) const;
-    bool hasWonVertical(bool who) const;
-    bool hasWonDiagonalTLBR(bool who) const;
-    bool hasWonDiagonalBLTR(bool who) const;
     bool hasWon(bool who) const;
     bool columnFull(int col) const;
     void placeTile(int playerInput, int insertRow);
     void undoMove();
-    void gameLoop();
     void endGame();
     void resetGame();
+
+private:
+    bool hasWonHorizontal(bool who) const;
+    bool hasWonVertical(bool who) const;
+    bool hasWonDiagonalTLBR(bool who) const;
+    bool hasWonDiagonalBLTR(bool who) const;
 };
 
 #endif

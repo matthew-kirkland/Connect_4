@@ -25,6 +25,6 @@ public:
 private:
     Move minimax(Game game, int depth, int alpha, int beta, bool originalPlayer);
     int evaluate(Game game, bool turn);
-}
+};
 
 #endif

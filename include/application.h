@@ -20,18 +20,20 @@
 class Application {
 public:
     Application() {
+        window.create(sf::VideoMode(sf::Vector2u(750, 645)), "Connect 4", sf::Style::Default);
+        if (!boardTexture.loadFromFile("../assets/board.png") ||
+            !redTokenTexture.loadFromFile("../assets/red_token.png") ||
+            !yellowTokenTexture.loadFromFile("../assets/yellow_token.png")) {
+            std::cout << "Error loading one of the files\n";
+        }
         window.setKeyRepeatEnabled(false);
     }
     void run(Game game);
 private:
-    sf::RenderWindow window(sf::VideoMode({750, 645}), "Connect 4", sf::Style::Default);
-    sf::Texture boardTexture("assets/board.png");
-    sf::Texture redTokenTexture("assets/red_token.png");
-    sf::Texture yellowTokenTexture("assets/yellow_token.png");
-
-    sf::Sprite boardSprite(sf::Texture boardTexture("assets/board.png"));
-    sf::Sprite redTokenSprite(sf::Texture redTokenTexture("assets/red_token.png"));
-    sf::Sprite yellowTokenSprite(sf::Texture yellowTokenTexture("assets/yellow_token.png"));
+    sf::RenderWindow window;
+    sf::Texture boardTexture;
+    sf::Texture redTokenTexture;
+    sf::Texture yellowTokenTexture;
 
     int findColumn(int x);
 };
