@@ -40,7 +40,7 @@ public:
 
     bool hasWon(bool who) const;
     bool columnFull(int col) const;
-    void placeTile(int playerInput, int insertRow);
+    void placeToken(int playerInput, int insertRow);
     void undoMove();
     void endGame();
     void resetGame();

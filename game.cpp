@@ -42,12 +42,12 @@ bool Game::columnFull(int col) const {
     return (((p1Board >> col) & 1) | ((p2Board >> col) & 1));
 }
 
-void Game::placeTile(int playerInput, int insertRow) {
+void Game::placeToken(int playerInput, int insertRow) {
     if (insertRow < 0) return;
 
     int tile = ((p1Board >> (playerInput + insertRow * NUM_COLS)) & 1) | ((p2Board >> (playerInput + insertRow * NUM_COLS)) & 1);
     if (tile != 0) {
-        placeTile(playerInput, insertRow - 1);
+        placeToken(playerInput, insertRow - 1);
     } else {
         uint64_t mask = 1;
         uint64_t boardBit = mask << (playerInput + insertRow * NUM_COLS);
