@@ -36,4 +36,5 @@ private:
     sf::Texture yellowTokenTexture;
 
     int findColumn(int x);
+    void drawTokens(Game game, int col);
 };

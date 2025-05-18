@@ -16,9 +16,8 @@
 #define FIRST false
 #define SECOND true
 
-#define BLANK_TOKEN '_'
-#define FIRST_TOKEN 'X'
-#define SECOND_TOKEN 'O'
+#define FIRST_TOKEN 'R'
+#define SECOND_TOKEN 'Y'
 
 extern char tokens[];
 
