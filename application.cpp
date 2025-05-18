@@ -7,11 +7,7 @@ void Application::run(Game game) {
     Engine engine;
 
     while (window.isOpen()) {
-        // if someone won or it was a draw, end the game loop
-        if ((game.hasWon(game.turn) || game.moveCount >= MAX_MOVES) && game.isActive) {
-            game.endGame();
-            std::cout << tokens[game.turn] << " has won!\n";
-        }
+        bool currentPlayer = game.turn;
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
                 window.close();
@@ -49,6 +45,11 @@ void Application::run(Game game) {
                     game.placeToken(findColumn(mouseButtonPressed->position.x), NUM_ROWS - 1);
                 }
             }
+        }
+
+        if ((game.hasWon(currentPlayer) || game.moveCount >= MAX_MOVES) && game.isActive) {
+            game.endGame();
+            std::cout << tokens[currentPlayer] << " has won!\n";
         }
         
         window.clear();
