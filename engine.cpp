@@ -14,7 +14,7 @@ Move Engine::minimax(Game game, int depth, int alpha, int beta, bool originalPla
     for (int i = 0; i < NUM_COLS; i++) {
         if (game.columnFull(i)) continue;
 
-        game.placeTile(i, NUM_ROWS - 1);
+        game.placeToken(i, NUM_ROWS - 1);
         Move childMove = minimax(game, depth - 1, alpha, beta, originalPlayer);
         game.undoMove();
         if ((isMax && childMove.value > bestMove.value) || (!isMax && childMove.value < bestMove.value)) {
