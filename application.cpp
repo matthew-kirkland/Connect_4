@@ -5,16 +5,21 @@
 void Application::run(Game game) {
     sf::Sprite boardSprite(boardTexture);
     Engine engine;
-
+    
+    bool drawHint = false;
+    Move bestMove;
+    window.clear();
     while (window.isOpen()) {
         bool currentPlayer = game.turn;
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()) {
+                drawHint = false;
                 window.close();
                 break;
             }
 
             if (const auto *keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+                drawHint = false;
                 if (keyPressed->scancode == sf::Keyboard::Scancode::Num1) {
                     game.placeToken(0, NUM_ROWS - 1);
                 } else if (keyPressed->scancode == sf::Keyboard::Scancode::Num2) {
@@ -32,16 +37,19 @@ void Application::run(Game game) {
                 } else if (keyPressed->scancode == sf::Keyboard::Scancode::U) {
                     game.undoMove();
                 } else if (keyPressed->scancode == sf::Keyboard::Scancode::H) {
-                    Move bestMove = engine.findBestMove(game, ENGINE_DEPTH);
+                    bestMove = engine.findBestMove(game, ENGINE_DEPTH);
+                    drawHint = true;
                     std::cout << "The best move for " << tokens[game.turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
                 } else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
                     game.resetGame();
                 } else {
+                    drawHint = true;
                     std::cout << "Invalid key pressed\n";
                 }
             }
             if (const auto *mouseButtonPressed = event->getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouseButtonPressed->button == sf::Mouse::Button::Left) {
+                    drawHint = false;
                     game.placeToken(findColumn(mouseButtonPressed->position.x), NUM_ROWS - 1);
                 }
             }
@@ -52,17 +60,28 @@ void Application::run(Game game) {
             std::cout << tokens[currentPlayer] << " has won!\n";
         }
         
-        window.clear();
         window.draw(boardSprite);
-        for (int i = 0; i < NUM_COLS; i++) {
-            drawTokens(game, i);
+        for (int i = 0; i < NUM_ROWS; i++) {
+            for (int j = 0; j < NUM_COLS; j++) {
+                if ((game.p1Board >> (j + i * NUM_COLS)) & 1) {
+                    drawToken(FIRST, i, j, 255);
+                } else if ((game.p2Board >> (j + i * NUM_COLS)) & 1) {
+                    drawToken(SECOND, i, j, 255);
+                }
+            }
+        }
+        if (drawHint) {
+            int row = game.getNextOpenRow(bestMove.column);
+            if (row != -1) {
+                drawToken(game.turn, game.getNextOpenRow(bestMove.column), bestMove.column, 128);
+            }
         }
         window.display();
     }
 }
 
 // fix this to work with different window sizes
-int Application::findColumn(int x) {
+int Application::findColumn(int x) const {
     if (x >= COL_1_START && x <= COL_1_END) return 0;
     if (x >= COL_2_START && x <= COL_2_END) return 1;
     if (x >= COL_3_START && x <= COL_3_END) return 2;
@@ -73,17 +92,17 @@ int Application::findColumn(int x) {
     else return -1;
 }
 
-void Application::drawTokens(Game game, int col) {
-    for (int i = 0; i < NUM_ROWS; i++) {
-        if ((game.p1Board >> (col + i * NUM_COLS)) & 1) {
-            sf::Sprite redTokenSprite(redTokenTexture);
-            redTokenSprite.setPosition({10 + 105 * col, 105 * i});
-            window.draw(redTokenSprite);
-        } else if ((game.p2Board >> (col + i * NUM_COLS)) & 1) {
-            sf::Sprite yellowTokenSprite(yellowTokenTexture);
-            yellowTokenSprite.setPosition({10 + 105 * col, 105 * i});
-            window.draw(yellowTokenSprite);
-        }
+void Application::drawToken(bool turn, int row, int col, int alpha) {
+    if (turn == FIRST) {
+        sf::Sprite redTokenSprite(tokenTexture);
+        redTokenSprite.setColor(sf::Color(255, 0, 0, alpha));
+        redTokenSprite.setPosition({(float)(10 + 105 * col), (float)(105 * row)});
+        window.draw(redTokenSprite);
+    } else if (turn == SECOND) {
+        sf::Sprite yellowTokenSprite(tokenTexture);
+        yellowTokenSprite.setColor(sf::Color(255, 255, 0, alpha));
+        yellowTokenSprite.setPosition({(float)(10 + 105 * col), (float)(105 * row)});
+        window.draw(yellowTokenSprite);
     }
 }
 

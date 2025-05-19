@@ -43,6 +43,7 @@ public:
     void undoMove();
     void endGame();
     void resetGame();
+    int getNextOpenRow(int col) const;
 
 private:
     bool hasWonHorizontal(bool who) const;

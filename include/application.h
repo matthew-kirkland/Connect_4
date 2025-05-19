@@ -23,7 +23,8 @@ public:
         window.create(sf::VideoMode(sf::Vector2u(750, 645)), "Connect 4", sf::Style::Default);
         if (!boardTexture.loadFromFile("../assets/board.png") ||
             !redTokenTexture.loadFromFile("../assets/red_token.png") ||
-            !yellowTokenTexture.loadFromFile("../assets/yellow_token.png")) {
+            !yellowTokenTexture.loadFromFile("../assets/yellow_token.png") ||
+            !tokenTexture.loadFromFile("../assets/token.png")) {
             std::cout << "Error loading one of the files\n";
         }
         window.setKeyRepeatEnabled(false);
@@ -34,7 +35,8 @@ private:
     sf::Texture boardTexture;
     sf::Texture redTokenTexture;
     sf::Texture yellowTokenTexture;
+    sf::Texture tokenTexture;
 
-    int findColumn(int x);
-    void drawTokens(Game game, int col);
+    int findColumn(int x) const;
+    void drawToken(bool turn, int row, int col, int alpha);
 };

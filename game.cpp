@@ -42,6 +42,15 @@ bool Game::columnFull(int col) const {
     return (((p1Board >> col) & 1) | ((p2Board >> col) & 1));
 }
 
+int Game::getNextOpenRow(int col) const {
+    int i = NUM_ROWS - 1;
+    while (i >= 0) {
+        if (!(((p1Board >> (col + i * NUM_COLS)) & 1) | ((p2Board >> (col + i * NUM_COLS)) & 1))) break;
+        i--;
+    }
+    return (i >= 0) ? i : -1;
+}
+
 void Game::placeToken(int playerInput, int insertRow) {
     if (insertRow < 0 || !(playerInput >= 0 && playerInput < NUM_COLS)) return;
 
