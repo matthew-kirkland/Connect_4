@@ -1,29 +1,7 @@
 #include "include/game.h"
-#include "include/minimax.h"
+#include "include/engine.h"
 
 char tokens[] = {FIRST_TOKEN, SECOND_TOKEN};
-
-void Game::clearScreen() const {
-    const char *CLEAR_SCREEN_ANSI = "\033[1;1H\033[2J";
-    write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, strlen(CLEAR_SCREEN_ANSI));
-    fflush(stdout);
-}
-
-void Game::printBoard() const {
-    clearScreen();
-    for (int i = 0; i < NUM_ROWS; i++) {
-        for (int j = 0; j < NUM_COLS; j++) {
-            if ((p1Board >> (i * NUM_COLS + j)) & 1) {
-                std::cout << "\033[31m" << tokens[FIRST] << " \033[0m";
-            } else if ((p2Board >> (i * NUM_COLS + j)) & 1) {
-                std::cout << "\033[33m" << tokens[SECOND] << " \033[0m";
-            } else {
-                std::cout << BLANK_TOKEN << " ";
-            }
-        }
-        std::cout << "\n";
-    }
-}
 
 bool Game::hasWonHorizontal(bool who) const {
     uint64_t board = (who == FIRST) ? p1Board : p2Board;
@@ -64,12 +42,21 @@ bool Game::columnFull(int col) const {
     return (((p1Board >> col) & 1) | ((p2Board >> col) & 1));
 }
 
-void Game::placeTile(int playerInput, int insertRow) {
-    if (insertRow < 0) return;
+int Game::getNextOpenRow(int col) const {
+    int i = NUM_ROWS - 1;
+    while (i >= 0) {
+        if (!(((p1Board >> (col + i * NUM_COLS)) & 1) | ((p2Board >> (col + i * NUM_COLS)) & 1))) break;
+        i--;
+    }
+    return (i >= 0) ? i : -1;
+}
+
+void Game::placeToken(int playerInput, int insertRow) {
+    if (insertRow < 0 || !(playerInput >= 0 && playerInput < NUM_COLS) || !isActive) return;
 
     int tile = ((p1Board >> (playerInput + insertRow * NUM_COLS)) & 1) | ((p2Board >> (playerInput + insertRow * NUM_COLS)) & 1);
     if (tile != 0) {
-        placeTile(playerInput, insertRow - 1);
+        placeToken(playerInput, insertRow - 1);
     } else {
         uint64_t mask = 1;
         uint64_t boardBit = mask << (playerInput + insertRow * NUM_COLS);
@@ -104,55 +91,17 @@ void Game::undoMove() {
     }
 }
 
-void Game::gameLoop() {
-    printBoard();
-    char c;
-    while ((c = getchar()) != EOF) {
-        if (c == '\n') continue;
-        if (c == 'q') {
-            std::cout << "Quitting!\n";
-            break;
-        }
-        if (c == 'w') {
-            std::cout << "It is " << tokens[turn] << "'s turn\n";
-            continue;
-        }
-        if (c == 'u' && moveCount > 0) {
-            undoMove();
-            printBoard();
-            continue;
-        }
-        if (c == 'h') {
-            Move bestMove = minimax(*this, 8, INT_MIN, INT_MAX, turn);
-            std::cout << "The best move for " << tokens[turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
-            continue;
-        }
-
-        c = c - '0' - 1;
-        if (c < 0 || c > NUM_COLS - 1) {
-            printBoard();
-            continue;
-        }
-
-        placeTile(c, NUM_ROWS - 1);
-        if (hasWon(!turn)) {
-            printBoard();
-            std::cout << tokens[!turn] << " has won!\n";
-            break;
-        }
-        if (moveCount >= MAX_MOVES) {
-            printBoard();
-            std::cout << "It's a draw!\n";
-            break;
-        }
-        printBoard();
-    }
-    std::cout << "Game ended!\n";
+void Game::endGame() {
+    isActive = false;
 }
 
-int main() {
-    Game game;
-    game.gameLoop();
-
-    return 0;
+void Game::resetGame() {
+    p1Board = 0;
+    p2Board = 0;
+    moveCount = 0;
+    turn = FIRST;
+    isActive = true;
+    for (int i = 0; i < MAX_MOVES; i++) {
+        moveStack[i] = -1;
+    }
 }

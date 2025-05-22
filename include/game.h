@@ -16,9 +16,8 @@
 #define FIRST false
 #define SECOND true
 
-#define BLANK_TOKEN '_'
-#define FIRST_TOKEN 'X'
-#define SECOND_TOKEN 'O'
+#define FIRST_TOKEN 'R'
+#define SECOND_TOKEN 'Y'
 
 extern char tokens[];
 
@@ -29,24 +28,28 @@ public:
     int moveStack[MAX_MOVES];
     int moveCount;
     bool turn;
+    bool isActive;
     Game() {
         p1Board = 0;
         p2Board = 0;
         moveCount = 0;
         turn = FIRST;
+        isActive = true;
     }
 
-    void clearScreen() const;
-    void printBoard() const;
+    bool hasWon(bool who) const;
+    bool columnFull(int col) const;
+    void placeToken(int playerInput, int insertRow);
+    void undoMove();
+    void endGame();
+    void resetGame();
+    int getNextOpenRow(int col) const;
+
+private:
     bool hasWonHorizontal(bool who) const;
     bool hasWonVertical(bool who) const;
     bool hasWonDiagonalTLBR(bool who) const;
     bool hasWonDiagonalBLTR(bool who) const;
-    bool hasWon(bool who) const;
-    bool columnFull(int col) const;
-    void placeTile(int playerInput, int insertRow);
-    void undoMove();
-    void gameLoop();
 };
 
 #endif
