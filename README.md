@@ -1,4 +1,4 @@
-# Connect 4 Engine v2.0.0
+# Connect 4 Engine v1.0.0
 > An engine to help players win in Connect 4
 
 This is a simple two-player game that operates via a game window, with a built-in engine that can be utilised on either player's turn.
@@ -25,17 +25,17 @@ Typing `h` during either player's turn will use the engine, currently set at a d
 - `h`: highlights the best move for the current player.
 
 # Changelog
-## v2.0.0 (22/05/2025)
+## v1.0.0 (22/05/2025)
 - Gameplay has moved out of the terminal! A simple game window replaced the terminal UI for a better experience
 - Hand-drawn board and token textures
 - Some actions like `w` and `q` have been removed
 
-## v1.1.0 (26/04/2025)
+## v0.2.0 (26/04/2025)
 - Engine speed has dramatically increased thanks to implementation of alpha-beta pruning
 - Increased speed has allowed the search depth to grow to 8 moves ahead
 
-## v1.0.0 (19/04/2025)
-- Added friendly colours to the token characters in the terminal
+## v0.1.1 (19/04/2025)
+- Added friendly, player-specific colours to the token characters in the terminal
 
 ## v0.1.0 (04/02/2025)
 - Engine speed has seen a mild improvement. 2D array board representation was scrapped and replaced with bitboards, which improved win-checking speeds and decreased game state evaluation runtime
