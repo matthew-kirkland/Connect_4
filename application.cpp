@@ -39,7 +39,6 @@ void Application::run(Game game) {
                 } else if (keyPressed->scancode == sf::Keyboard::Scancode::H) {
                     bestMove = engine.findBestMove(game, ENGINE_DEPTH);
                     drawHint = true;
-                    std::cout << "The best move for " << tokens[game.turn] << " is to play column " << bestMove.column + 1 << " (evaluation of " << bestMove.value << ")\n";
                 } else if (keyPressed->scancode == sf::Keyboard::Scancode::R) {
                     game.resetGame();
                 } else {

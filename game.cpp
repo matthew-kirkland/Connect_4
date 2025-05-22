@@ -52,7 +52,7 @@ int Game::getNextOpenRow(int col) const {
 }
 
 void Game::placeToken(int playerInput, int insertRow) {
-    if (insertRow < 0 || !(playerInput >= 0 && playerInput < NUM_COLS)) return;
+    if (insertRow < 0 || !(playerInput >= 0 && playerInput < NUM_COLS) || !isActive) return;
 
     int tile = ((p1Board >> (playerInput + insertRow * NUM_COLS)) & 1) | ((p2Board >> (playerInput + insertRow * NUM_COLS)) & 1);
     if (tile != 0) {
