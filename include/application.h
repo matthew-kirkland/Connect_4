@@ -20,7 +20,7 @@
 class Application {
 public:
     Application() {
-        window.create(sf::VideoMode(sf::Vector2u(750, 645)), "Connect 4", sf::Style::Default);
+        window.create(sf::VideoMode(sf::Vector2u(750, 645)), "Connect 4", sf::Style::Close);
         if (!boardTexture.loadFromFile("../assets/board.png") ||
             !redTokenTexture.loadFromFile("../assets/red_token.png") ||
             !yellowTokenTexture.loadFromFile("../assets/yellow_token.png") ||
