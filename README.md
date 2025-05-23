@@ -12,7 +12,7 @@ Before attempting anything, ensure that you have the following:
   - On Linux: `g++` or `clang++`
 - Git (to fetch SFML via CMake)
 
-Now, to run the game, navigate to the repository's root directory.
+Then, to run the game, navigate to the repository's root directory.
 1. Create a `build` directory by typing `mkdir build`
 2. Navigate into it  by typing `cd build`
 3. Run `cmake ..` and then `cmake --build .`
@@ -23,6 +23,7 @@ Typing `h` during either player's turn will use the engine, currently set at a d
 - Clicking in any column: places a token in the clicked column.
 - `u`: performs an "undo" on the most recent move.
 - `h`: highlights the best move for the current player.
+- `r`; resets the game. Note that this command is used to start over, as it will freeze upon either player winning.
 
 # Changelog
 ## v1.0.0 (22/05/2025)
